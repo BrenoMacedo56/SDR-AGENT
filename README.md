@@ -78,7 +78,10 @@ The goal is to deploy this SDR agent as a fully functional solution, integrated 
 - Professional user interface for lead interactions  
 
 
-https://github.com/user-attachments/assets/e4ebb0cc-f0ed-4dbc-802f-cc5e1fe870a4
+
+
+https://github.com/user-attachments/assets/c6b90eec-96a2-4618-a60f-7727ada1ef0f
+
 
 
 > **Note:** This is *not* a final version of the web chat, and the SDR agent is *not* yet integrated into the prototype.
