@@ -2,13 +2,17 @@ def card_creator() -> str:
     "Manges the card creation query"
 
     prompt = """
-            mutation($input: CreateCardInput!) {
-            createCard(input: $input) {
-                card {
-                    id
-                    title
-                }
+    mutation CreateCard($input: CreateCardInput!) {
+          createCard(input: $input) {
+            card {
+              id
+              title
+              fields {
+                name
+                value
+              }
             }
+          }
         }
     """
 

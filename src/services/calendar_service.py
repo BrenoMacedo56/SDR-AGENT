@@ -1,8 +1,8 @@
-from src.integrations.gcalendar import CalComAPI
+from src.integrations.gcalendar import GoogleCalendarAPI
 
 class CalendarService:
     def __init__(self):
-        self.api = CalComAPI()
+        self.api = GoogleCalendarAPI()
 
     def get_slots(self, username: str, event_type: str, start_date: str, end_date: str):
         """

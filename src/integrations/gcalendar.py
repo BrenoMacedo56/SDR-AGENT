@@ -13,34 +13,21 @@ SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
 class GoogleCalendarAPI:
     def __init__(self):
-        # Carrega as variáveis de ambiente
-        load_dotenv()
-
-        # 💡 Novo: Usaremos o token.json para autenticação OAuth
         creds = None
 
-        # 1. Tenta carregar as credenciais do token.json
         if os.path.exists("token.json"):
             creds = Credentials.from_authorized_user_file("token.json", SCOPES)
 
-        # 2. Se as credenciais não existirem ou forem inválidas,
-        #    você precisará rodar o script de autenticação (Passo 1)
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 # Tenta renovar o token automaticamente
                 creds.refresh(Request())
             else:
-                # Se não houver token ou ele não puder ser renovado,
-                # você deve parar a execução e pedir para o usuário rodar o script de autenticação.
-                # Em um ambiente de produção (deploy), o token.json DEVE existir.
                 raise FileNotFoundError(
                     "O arquivo 'token.json' não foi encontrado ou está inválido. "
                     "Rode o script de autenticação (Passo 1) para gerar o token OAuth."
                 )
 
-        print("✅ Autenticação OAuth (token.json) carregada com sucesso.")
-
-        # Você ainda precisará do Calendar ID, que pode vir das suas Settings
         self.calendar_id = Settings.GOOGLE_CALENDAR_ID
         if not self.calendar_id:
             raise ValueError(
@@ -59,10 +46,9 @@ class GoogleCalendarAPI:
             "description": description,
             "start": {"dateTime": start_time, "timeZone": "America/Sao_Paulo"},
             "end": {"dateTime": end_time, "timeZone": "America/Sao_Paulo"},
-            "conferenceData": {  # 🔹 Gera o link automático do Meet
+            "conferenceData": {
                 "createRequest": {
-                    "requestId": str(uuid.uuid4()),  # precisa ser único
-                    # 💡 Agora você pode usar o valor moderno, que é mais confiável com OAuth
+                    "requestId": str(uuid.uuid4()),
                     "conferenceSolutionKey": {"type": "hangoutsMeet"}
                 }
             },
@@ -79,11 +65,23 @@ class GoogleCalendarAPI:
             conferenceDataVersion=1
         ).execute()
 
+        # --- Lógica para formatação da data ---
+        # 1. Extrair a string de data/hora de início do evento (formato RFC3339)
+        start_datetime_str = event["start"]["dateTime"]
+
+        # 2. Converter a string para um objeto datetime
+        start_datetime_obj = datetime.datetime.fromisoformat(start_datetime_str)
+
+        # 3. Formatar o objeto datetime para a string "DD/MM/YY"
+        formatted_date = start_datetime_obj.strftime("%d/%m/%y")
+        # --------------------------------------
+
         return {
             "id": event.get("id"),
             "summary": event.get("summary"),
             "meet_link": event["conferenceData"]["entryPoints"][0]["uri"],
-            "html_link": event.get("htmlLink")
+            "html_link": event.get("htmlLink"),
+            "date": formatted_date  # Agora retorna a data formatada como DD/MM/YY
         }
 
     def list_events(self, max_results=20):
