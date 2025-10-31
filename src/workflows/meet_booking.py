@@ -5,7 +5,7 @@ class MeetingBookingWorkflow:
         self.lead_repo = lead_repo
         self.pipefy_service = pipefy_service
         self.response_generator = response_generator
-        self.calendar_service = CalendarService()  # 👈 Novo
+        self.calendar_service = CalendarService()
 
     async def run(self, session_id: str, message: str, context: list[dict]):
         lead = self.lead_repo.get_lead(session_id)
