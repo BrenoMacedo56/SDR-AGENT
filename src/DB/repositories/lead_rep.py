@@ -23,7 +23,6 @@ class LeadRepository:
                 "session_id": session_id,
                 **data,
                 "created_at": datetime.utcnow(),
-                "status": "novo"
             })
 
     def get_lead(self, session_id: str):
